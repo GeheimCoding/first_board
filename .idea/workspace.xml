@@ -11,13 +11,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add generic components">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_26,_12_02_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_20_03_26__12_02__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-    </list>
+    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add 2d grid with hover events" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -142,7 +136,7 @@
       <workItem from="1775988235887" duration="2492000" />
       <workItem from="1776349963186" duration="1452000" />
       <workItem from="1776412276256" duration="6477000" />
-      <workItem from="1777104552720" duration="5020000" />
+      <workItem from="1777104552720" duration="5186000" />
     </task>
     <task id="LOCAL-00001" summary="cargo init">
       <option name="closed" value="true" />
@@ -160,7 +154,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774004573966</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="add 2d grid with hover events">
+      <option name="closed" value="true" />
+      <created>1777110977553</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1777110977554</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add 2d grid with hover events">
+      <option name="closed" value="true" />
+      <created>1777111057781</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1777111057781</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -179,7 +189,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="cargo init" />
-    <option name="LAST_COMMIT_MESSAGE" value="cargo init" />
+    <MESSAGE value="add 2d grid with hover events" />
+    <option name="LAST_COMMIT_MESSAGE" value="add 2d grid with hover events" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
