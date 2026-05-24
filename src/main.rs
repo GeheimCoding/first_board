@@ -187,16 +187,55 @@ fn draw_hovered_cell(
     gizmos.lineloop_2d(points, Color::WHITE);
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
-    commands
-        .spawn(Grid2d::new(
-            Some(3),
-            Some(3),
-            Vec2::new(50.0, 50.0),
-            Vec2::splat(100.0),
+
+    let grid = commands
+        .spawn((
+            Grid2d::new(Some(3), Some(1), Vec2::new(150.0, 225.0), Vec2::splat(10.0)),
+            Transform::from_translation(Vec3::new(-240.0, -110.0, 0.0))
+                .with_rotation(Quat::from_rotation_z(0.1)),
         ))
-        .observe(draw_hovered_cell);
+        .observe(draw_hovered_cell)
+        .id();
+    let card = commands
+        .spawn(Sprite::from_image(asset_server.load("number_10.png")))
+        .id();
+
+    commands.write_message(AddToGrid {
+        cell: (1, 0),
+        grid,
+        entity: card,
+    });
+}
+
+fn add_to_grid(
+    mut commands: Commands,
+    mut reader: MessageReader<AddToGrid>,
+    mut grids: Query<&mut Grid2d>,
+    mut sprites: Query<(&mut Sprite, &mut Transform)>,
+) {
+    for event in reader.read() {
+        let mut grid = grids.get_mut(event.grid).expect("grid");
+        let (mut sprite, mut transform) = sprites.get_mut(event.entity).expect("sprite");
+
+        transform.translation = ((grid.size + grid.gap)
+            * Vec2::new(event.cell.0 as f32, event.cell.1 as f32)
+            + grid.size / 2.0)
+            .extend(transform.translation.z);
+        sprite.custom_size = Some(grid.size);
+
+        grid.entities.insert(event.cell, event.entity);
+        // TODO: reparent transform?
+        commands.entity(event.grid).add_child(event.entity);
+    }
+}
+
+#[derive(Message)]
+struct AddToGrid {
+    pub cell: Cell,
+    pub grid: Entity,
+    pub entity: Entity,
 }
 
 #[derive(Resource)]
@@ -229,12 +268,15 @@ fn transform_to_local_2d(transform: &GlobalTransform, point: Vec2) -> Vec2 {
         .truncate()
 }
 
+// TODO: GlobalTransform reparented_to
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_message::<AddToGrid>()
         .add_systems(Startup, setup)
         .add_systems(PreUpdate, update_mouse_position)
-        .add_systems(Update, hover_over_grids)
+        .add_systems(Update, (hover_over_grids, add_to_grid))
         .insert_resource(MouseWorldPosition::default())
         .run();
 }
