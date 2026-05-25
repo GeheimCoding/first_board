@@ -35,8 +35,19 @@ struct Grid2d {
     entities: HashMap<Cell, Entity>,
 }
 
+#[derive(Component)]
+struct Card;
+
 #[derive(EntityEvent)]
 struct Grid2dHover {
+    #[event_target]
+    grid: Entity,
+    cell: Cell,
+    entity: Option<Entity>,
+}
+
+#[derive(EntityEvent)]
+struct Grid2dClick {
     #[event_target]
     grid: Entity,
     cell: Cell,
@@ -158,6 +169,7 @@ impl Grid2d {
 fn hover_over_grids(
     grids: Query<(Entity, &Grid2d, &GlobalTransform)>,
     mouse_position: Res<MouseWorldPosition>,
+    buttons: Res<ButtonInput<MouseButton>>,
     mut commands: Commands,
 ) {
     for (entity, grid, transform) in grids.iter() {
@@ -170,6 +182,13 @@ fn hover_over_grids(
             cell,
             entity: grid.entities.get(&cell).copied(),
         });
+        if buttons.just_pressed(MouseButton::Left) {
+            commands.trigger(Grid2dClick {
+                grid: entity,
+                cell,
+                entity: grid.entities.get(&cell).copied(),
+            });
+        }
     }
 }
 
@@ -187,20 +206,37 @@ fn draw_hovered_cell(
     gizmos.lineloop_2d(points, Color::WHITE);
 }
 
+fn move_to_grid(click: On<Grid2dClick>, mut commands: Commands, cards: Query<Entity, With<Card>>) {
+    // TODO: replace with entity "in hand"
+    let card = cards.iter().next().expect("card");
+    commands.write_message(AddToGrid {
+        cell: click.cell,
+        grid: click.grid,
+        entity: card,
+    });
+}
+
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
 
     let grid = commands
         .spawn((
             Grid2d::new(Some(3), Some(1), Vec2::new(150.0, 225.0), Vec2::splat(10.0)),
-            Transform::from_translation(Vec3::new(-240.0, -110.0, 0.0))
+            Transform::from_translation(Vec3::new(-260.0, -110.0, 0.0))
                 .with_rotation(Quat::from_rotation_z(0.1)),
         ))
-        .observe(draw_hovered_cell)
         .id();
+    commands.spawn((
+        Grid2d::new(Some(1), Some(2), Vec2::new(80.0, 80.0), Vec2::splat(20.0)),
+        Transform::from_translation(Vec3::new(280.0, 40.0, 0.0))
+            .with_rotation(Quat::from_rotation_z(-0.2)),
+    ));
     let card = commands
-        .spawn(Sprite::from_image(asset_server.load("number_10.png")))
+        .spawn((Card, Sprite::from_image(asset_server.load("number_10.png"))))
         .id();
+
+    commands.add_observer(draw_hovered_cell);
+    commands.add_observer(move_to_grid);
 
     commands.write_message(AddToGrid {
         cell: (1, 0),
@@ -226,7 +262,6 @@ fn add_to_grid(
         sprite.custom_size = Some(grid.size);
 
         grid.entities.insert(event.cell, event.entity);
-        // TODO: reparent transform?
         commands.entity(event.grid).add_child(event.entity);
     }
 }
