@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_easings::{Ease, EaseFunction, EasingType, EasingsPlugin};
+//use bevy_easings::{Ease, EaseFunction, EasingType, EasingsPlugin};
 use std::cmp::PartialEq;
 use std::collections::HashMap;
 use std::time::Duration;
@@ -215,7 +215,7 @@ fn move_to_grid(click: On<Grid2dClick>, mut commands: Commands, cards: Query<Ent
         cell: click.cell,
         grid: click.grid,
         entity: card,
-        with_easing: true,
+        with_easing: false,
     });
 }
 
@@ -264,34 +264,34 @@ fn add_to_grid(
             * Vec2::new(event.cell.0 as f32, event.cell.1 as f32)
             + grid.size / 2.0)
             .extend(transform.translation.z);
-        let ease_function = EaseFunction::QuadraticInOut;
-        let easing_type = EasingType::Once {
-            duration: Duration::from_millis(100),
-        };
+        // let ease_function = EaseFunction::QuadraticInOut;
+        // let easing_type = EasingType::Once {
+        //     duration: Duration::from_millis(100),
+        // };
 
         if event.with_easing {
-            let entity_global = globals.get(event.entity).expect("global");
-            let grid_global = globals.get(event.grid).expect("grid");
-            *transform = entity_global.reparented_to(&grid_global);
-
-            commands.get_entity(event.entity).expect("entity").insert((
-                transform.ease_to(
-                    Transform {
-                        translation: new_translation,
-                        ..default()
-                    },
-                    ease_function,
-                    easing_type,
-                ),
-                sprite.clone().ease_to(
-                    Sprite {
-                        custom_size: Some(grid.size),
-                        ..default()
-                    },
-                    ease_function,
-                    easing_type,
-                ),
-            ));
+            // let entity_global = globals.get(event.entity).expect("global");
+            // let grid_global = globals.get(event.grid).expect("grid");
+            // *transform = entity_global.reparented_to(&grid_global);
+            //
+            // commands.get_entity(event.entity).expect("entity").insert((
+            //     transform.ease_to(
+            //         Transform {
+            //             translation: new_translation,
+            //             ..default()
+            //         },
+            //         ease_function,
+            //         easing_type,
+            //     ),
+            //     sprite.clone().ease_to(
+            //         Sprite {
+            //             custom_size: Some(grid.size),
+            //             ..default()
+            //         },
+            //         ease_function,
+            //         easing_type,
+            //     ),
+            // ));
         } else {
             transform.translation = new_translation;
             sprite.custom_size = Some(grid.size);
@@ -343,7 +343,7 @@ fn transform_to_local_2d(transform: &GlobalTransform, point: Vec2) -> Vec2 {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(EasingsPlugin::default())
+        //.add_plugins(EasingsPlugin::default())
         .add_message::<AddToGrid>()
         .add_systems(Startup, setup)
         .add_systems(PreUpdate, update_mouse_position)

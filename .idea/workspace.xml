@@ -11,7 +11,12 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add easing" />
+    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add easing">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,6 +87,8 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/Julian.Kanzler/Documents/Programming/Rust/RustroverProjects/first_board/assets",
     "node.js.detected.package.eslint": "true",
@@ -92,7 +99,7 @@
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
     "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "vcs.Git",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -147,7 +154,14 @@
       <workItem from="1778318250826" duration="4707000" />
       <workItem from="1779612680817" duration="2179000" />
       <workItem from="1779709405768" duration="2332000" />
-      <workItem from="1780255078194" duration="2902000" />
+      <workItem from="1780255078194" duration="2987000" />
+      <workItem from="1780483546835" duration="75000" />
+      <workItem from="1780519503193" duration="614000" />
+      <workItem from="1781182616768" duration="603000" />
+      <workItem from="1782040996627" duration="59000" />
+      <workItem from="1782041675334" duration="631000" />
+      <workItem from="1782042315216" duration="112000" />
+      <workItem from="1782042433911" duration="350000" />
     </task>
     <task id="LOCAL-00001" summary="cargo init">
       <option name="closed" value="true" />
@@ -213,7 +227,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780257965032</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="add easing">
+      <option name="closed" value="true" />
+      <created>1780258004015</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780258004015</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
