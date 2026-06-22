@@ -20,13 +20,14 @@ impl Direction {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Default, PartialEq)]
 enum GapMode {
     Include,
+    #[default]
     Exclude,
 }
 
-#[derive(Component)]
+#[derive(Clone, Component, Default)]
 #[require(Transform)]
 struct Grid2d {
     width: Option<usize>,
@@ -225,7 +226,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let grid = commands
         .spawn((
             Grid2d::new(Some(3), Some(1), Vec2::new(150.0, 225.0), Vec2::splat(10.0)),
-            Transform::from_translation(Vec3::new(-260.0, -110.0, 0.0))
+            Transform::from_translation(Vec3::new(-260.0, 110.0, 0.0))
                 .with_rotation(Quat::from_rotation_z(0.1)),
         ))
         .id();
@@ -237,6 +238,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let card = commands
         .spawn((Card, Sprite::from_image(asset_server.load("number_10.png"))))
         .id();
+
+    commands.spawn_scene(bsn! {
+        pile(Vec2::new(150.0, 225.0))
+        Transform::from_translation(Vec3::new(-80.0, -110.0, 0.0))
+    });
 
     commands.add_observer(draw_hovered_cell);
     commands.add_observer(move_to_grid);
@@ -313,6 +319,12 @@ struct AddToGrid {
 #[derive(Resource)]
 struct MouseWorldPosition(Vec2);
 
+#[derive(Clone, Component, Default)]
+#[require(Grid2d)]
+struct Pile {
+    entities: Vec<Entity>,
+}
+
 impl Default for MouseWorldPosition {
     fn default() -> Self {
         MouseWorldPosition(Vec2::default())
@@ -338,6 +350,13 @@ fn transform_to_local_2d(transform: &GlobalTransform, point: Vec2) -> Vec2 {
         .inverse()
         .transform_point(point.extend(0.0))
         .truncate()
+}
+
+fn pile(size: Vec2) -> impl Scene {
+    bsn! {
+        Pile
+        Grid2d::new(Some(1), Some(1), size, Vec2::ZERO)
+    }
 }
 
 fn main() {
