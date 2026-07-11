@@ -1,3 +1,5 @@
+use bevy::ecs::lifecycle::HookContext;
+use bevy::ecs::world::DeferredWorld;
 use bevy::prelude::*;
 use bevy_easings::{Ease, EaseFunction, EasingType, EasingsPlugin};
 use std::cmp::PartialEq;
@@ -38,8 +40,35 @@ struct Grid2d {
     entities: HashMap<Cell, Entity>,
 }
 
-#[derive(Component)]
-struct Card;
+#[derive(Clone)]
+enum FacingSide {
+    FrontSideUp,
+    BackSideUp,
+}
+
+#[derive(EntityEvent)]
+struct FlipSide {
+    entity: Entity,
+    facing_side: Option<FacingSide>,
+}
+
+#[derive(Component, Clone)]
+#[require(Sprite)]
+#[component(on_add = on_card_added)]
+struct Card {
+    facing_side: FacingSide,
+    front: Handle<Image>,
+    back: Handle<Image>,
+}
+
+fn on_card_added(mut world: DeferredWorld, context: HookContext) {
+    let card = world.get::<Card>(context.entity).expect("card").clone();
+    let mut sprite = world.get_mut::<Sprite>(context.entity).expect("sprite");
+    sprite.image = match card.facing_side {
+        FacingSide::FrontSideUp => card.front,
+        FacingSide::BackSideUp => card.back,
+    }
+}
 
 #[derive(EntityEvent)]
 struct Grid2dHover {
@@ -235,8 +264,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         Transform::from_translation(Vec3::new(280.0, 40.0, 0.0))
             .with_rotation(Quat::from_rotation_z(-0.2)),
     ));
+    let front = asset_server.load("number_10.png");
+    let back = asset_server.load("back.png");
     let card = commands
-        .spawn((Card, Sprite::from_image(asset_server.load("number_10.png"))))
+        .spawn(Card {
+            facing_side: FacingSide::BackSideUp,
+            front,
+            back,
+        })
         .id();
 
     commands.spawn_scene(bsn! {
