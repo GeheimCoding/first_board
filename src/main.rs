@@ -1,3 +1,5 @@
+extern crate core;
+
 use bevy::ecs::lifecycle::HookContext;
 use bevy::ecs::world::DeferredWorld;
 use bevy::prelude::*;
@@ -238,6 +240,44 @@ fn draw_hovered_cell(
     gizmos.lineloop_2d(points, Color::WHITE);
 }
 
+fn flip_card_with_key_f(
+    hover: On<Grid2dHover>,
+    mut commands: Commands,
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    if let Some(entity) = hover.entity
+        && keyboard.just_pressed(KeyCode::KeyF)
+    {
+        commands.trigger(FlipSide {
+            entity,
+            facing_side: None,
+        });
+    }
+}
+
+fn flip_card_side(
+    side: On<FlipSide>,
+    mut cards: Query<&mut Card>,
+    mut sprites: Query<&mut Sprite>,
+) {
+    let Ok(mut card) = cards.get_mut(side.entity) else {
+        return;
+    };
+    let mut sprite = sprites.get_mut(side.entity).expect("sprite");
+    let facing_side = match &side.facing_side {
+        None => match card.facing_side {
+            FacingSide::FrontSideUp => FacingSide::BackSideUp,
+            FacingSide::BackSideUp => FacingSide::FrontSideUp,
+        },
+        Some(facing_side) => facing_side.clone(),
+    };
+    sprite.image = match facing_side {
+        FacingSide::FrontSideUp => card.front.clone(),
+        FacingSide::BackSideUp => card.back.clone(),
+    };
+    card.facing_side = facing_side;
+}
+
 fn move_to_grid(click: On<Grid2dClick>, mut commands: Commands, cards: Query<Entity, With<Card>>) {
     // TODO: replace with entity "in hand"
     let card = cards.iter().next().expect("card");
@@ -281,6 +321,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands.add_observer(draw_hovered_cell);
     commands.add_observer(move_to_grid);
+    commands.add_observer(flip_card_with_key_f);
+    commands.add_observer(flip_card_side);
 
     commands.write_message(AddToGrid {
         cell: (1, 0),
@@ -290,6 +332,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+// TODO: remove from old grid as well :)
 fn add_to_grid(
     mut commands: Commands,
     mut reader: MessageReader<AddToGrid>,
