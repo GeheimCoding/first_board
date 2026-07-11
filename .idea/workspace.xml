@@ -11,9 +11,9 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="update to bevy 0.19">
+    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add pile">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +161,8 @@
       <workItem from="1782042315216" duration="112000" />
       <workItem from="1782042433911" duration="525000" />
       <workItem from="1782047027356" duration="933000" />
-      <workItem from="1782161298678" duration="831000" />
+      <workItem from="1782161298678" duration="862000" />
+      <workItem from="1783772492359" duration="19000" />
     </task>
     <task id="LOCAL-00001" summary="cargo init">
       <option name="closed" value="true" />
@@ -243,7 +244,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782042955818</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="add pile">
+      <option name="closed" value="true" />
+      <created>1782162154618</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1782162154618</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -267,7 +276,8 @@
     <MESSAGE value="move card on different grids" />
     <MESSAGE value="add easing" />
     <MESSAGE value="update to bevy 0.19" />
-    <option name="LAST_COMMIT_MESSAGE" value="update to bevy 0.19" />
+    <MESSAGE value="add pile" />
+    <option name="LAST_COMMIT_MESSAGE" value="add pile" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
