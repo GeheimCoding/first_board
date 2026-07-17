@@ -332,15 +332,21 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-// TODO: remove from old grid as well :)
 fn add_to_grid(
     mut commands: Commands,
     mut reader: MessageReader<AddToGrid>,
     mut grids: Query<&mut Grid2d>,
     mut sprites: Query<(&mut Sprite, &mut Transform)>,
+    child_of: Query<&ChildOf>,
     globals: Query<&GlobalTransform>,
 ) {
     for event in reader.read() {
+        // remove from old grid first
+        if let Ok(parent) = child_of.get(event.entity).map(ChildOf::parent)
+            && let Ok(mut parent) = grids.get_mut(parent)
+        {
+            parent.entities.retain(|_, e| *e != event.entity);
+        }
         let mut grid = grids.get_mut(event.grid).expect("grid");
         let (mut sprite, mut transform) = sprites.get_mut(event.entity).expect("sprite");
 

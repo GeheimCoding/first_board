@@ -11,7 +11,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="add two sides to cards">
+    <list default="true" id="2aa26b00-d42f-4335-9c88-022075090346" name="Changes" comment="flip card side with keyboard">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
@@ -162,7 +162,9 @@
       <workItem from="1782042433911" duration="525000" />
       <workItem from="1782047027356" duration="933000" />
       <workItem from="1782161298678" duration="862000" />
-      <workItem from="1783772492359" duration="4840000" />
+      <workItem from="1783772492359" duration="4863000" />
+      <workItem from="1784134783048" duration="63000" />
+      <workItem from="1784271701777" duration="617000" />
     </task>
     <task id="LOCAL-00001" summary="cargo init">
       <option name="closed" value="true" />
@@ -268,7 +270,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783775613286</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="flip card side with keyboard">
+      <option name="closed" value="true" />
+      <created>1783777909037</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1783777909037</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -295,7 +305,8 @@
     <MESSAGE value="add pile" />
     <MESSAGE value="update bevy_easings" />
     <MESSAGE value="add two sides to cards" />
-    <option name="LAST_COMMIT_MESSAGE" value="add two sides to cards" />
+    <MESSAGE value="flip card side with keyboard" />
+    <option name="LAST_COMMIT_MESSAGE" value="flip card side with keyboard" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
