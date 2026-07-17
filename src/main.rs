@@ -5,7 +5,7 @@ use bevy::ecs::world::DeferredWorld;
 use bevy::prelude::*;
 use bevy_easings::{Ease, EaseFunction, EasingType, EasingsPlugin};
 use std::cmp::PartialEq;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::time::Duration;
 
 type Cell = (isize, isize);
@@ -31,6 +31,83 @@ enum GapMode {
     Exclude,
 }
 
+#[derive(Clone, Default)]
+struct GridEntities {
+    entity_to_cell: HashMap<Entity, Cell>,
+    cell_to_entities: HashMap<Cell, VecDeque<Entity>>,
+}
+
+impl GridEntities {
+    fn get_cell(&self, entity: Entity) -> Option<Cell> {
+        self.entity_to_cell.get(&entity).copied()
+    }
+
+    fn get_entities(&self, cell: Cell) -> VecDeque<Entity> {
+        self.cell_to_entities
+            .get(&cell)
+            .cloned()
+            .unwrap_or_default()
+    }
+
+    fn back(&self, cell: Cell) -> Option<Entity> {
+        self.cell_to_entities
+            .get(&cell)
+            .map(VecDeque::back)
+            .flatten()
+            .copied()
+    }
+
+    fn front(&self, cell: Cell) -> Option<Entity> {
+        self.cell_to_entities
+            .get(&cell)
+            .map(VecDeque::front)
+            .flatten()
+            .copied()
+    }
+
+    fn push_back(&mut self, cell: Cell, entity: Entity) {
+        self.entity_to_cell.insert(entity, cell);
+        self.cell_to_entities
+            .entry(cell)
+            .or_default()
+            .push_back(entity);
+    }
+
+    fn push_front(&mut self, cell: Cell, entity: Entity) {
+        self.entity_to_cell.insert(entity, cell);
+        self.cell_to_entities
+            .entry(cell)
+            .or_default()
+            .push_front(entity);
+    }
+
+    fn pop_back(&mut self, cell: Cell) {
+        if let Some(entities) = self.cell_to_entities.get_mut(&cell)
+            && let Some(entity) = entities.pop_back()
+        {
+            self.entity_to_cell.remove(&entity);
+        }
+    }
+
+    fn pop_front(&mut self, cell: Cell) {
+        if let Some(entities) = self.cell_to_entities.get_mut(&cell)
+            && let Some(entity) = entities.pop_front()
+        {
+            self.entity_to_cell.remove(&entity);
+        }
+    }
+
+    fn remove(&mut self, entity: Entity) {
+        let Some(cell) = self.entity_to_cell.remove(&entity) else {
+            return;
+        };
+        self.cell_to_entities
+            .get_mut(&cell)
+            .expect("at least one entity")
+            .retain(|e| *e != entity);
+    }
+}
+
 #[derive(Clone, Component, Default)]
 #[require(Transform)]
 struct Grid2d {
@@ -39,7 +116,7 @@ struct Grid2d {
     size: Vec2,
     gap: Vec2,
     gap_mode: GapMode,
-    entities: HashMap<Cell, Entity>,
+    entities: GridEntities,
 }
 
 #[derive(Clone)]
@@ -96,7 +173,7 @@ impl Grid2d {
             size,
             gap,
             gap_mode: GapMode::Exclude,
-            entities: HashMap::new(),
+            entities: GridEntities::default(),
         }
     }
 
@@ -163,41 +240,41 @@ impl Grid2d {
         }
     }
 
-    pub fn orthogonal_neighbors(&self, position: Cell) -> Vec<(Cell, Entity)> {
-        self.neighbors(position, Direction::Cardinal)
-    }
-
-    pub fn all_neighbors(&self, position: Cell) -> Vec<(Cell, Entity)> {
-        self.neighbors(position, Direction::Intercardinal)
-    }
-
-    pub fn neighbors(&self, position: Cell, direction: Direction) -> Vec<(Cell, Entity)> {
-        self.range(position, direction, 1)
-            .into_iter()
-            .filter(|(pos, _)| pos != &position)
-            .collect()
-    }
-
-    // TODO: use iterator instead of vec?
-    pub fn range(
-        &self,
-        (x, y): Cell,
-        direction: Direction,
-        distance: usize,
-    ) -> Vec<(Cell, Entity)> {
-        let mut elements = vec![];
-        for pos_x in x - distance as isize..x + distance as isize {
-            for pos_y in y - distance as isize..y + distance as isize {
-                let position = (pos_x, pos_y);
-                if direction.valid_positions((x, y), position)
-                    && let Some(element) = self.entities.get(&position)
-                {
-                    elements.push((position, *element));
-                }
-            }
-        }
-        elements
-    }
+    // pub fn orthogonal_neighbors(&self, position: Cell) -> Vec<(Cell, Entity)> {
+    //     self.neighbors(position, Direction::Cardinal)
+    // }
+    //
+    // pub fn all_neighbors(&self, position: Cell) -> Vec<(Cell, Entity)> {
+    //     self.neighbors(position, Direction::Intercardinal)
+    // }
+    //
+    // pub fn neighbors(&self, position: Cell, direction: Direction) -> Vec<(Cell, Entity)> {
+    //     self.range(position, direction, 1)
+    //         .into_iter()
+    //         .filter(|(pos, _)| pos != &position)
+    //         .collect()
+    // }
+    //
+    // // TODO: use iterator instead of vec?
+    // pub fn range(
+    //     &self,
+    //     (x, y): Cell,
+    //     direction: Direction,
+    //     distance: usize,
+    // ) -> Vec<(Cell, Entity)> {
+    //     let mut elements = vec![];
+    //     for pos_x in x - distance as isize..x + distance as isize {
+    //         for pos_y in y - distance as isize..y + distance as isize {
+    //             let position = (pos_x, pos_y);
+    //             if direction.valid_positions((x, y), position)
+    //                 && let Some(element) = self.entities.get(&position)
+    //             {
+    //                 elements.push((position, *element));
+    //             }
+    //         }
+    //     }
+    //     elements
+    // }
 }
 
 fn hover_over_grids(
@@ -214,13 +291,13 @@ fn hover_over_grids(
         commands.trigger(Grid2dHover {
             grid: entity,
             cell,
-            entity: grid.entities.get(&cell).copied(),
+            entity: grid.entities.front(cell),
         });
         if buttons.just_pressed(MouseButton::Left) {
             commands.trigger(Grid2dClick {
                 grid: entity,
                 cell,
-                entity: grid.entities.get(&cell).copied(),
+                entity: grid.entities.front(cell),
             });
         }
     }
@@ -345,7 +422,7 @@ fn add_to_grid(
         if let Ok(parent) = child_of.get(event.entity).map(ChildOf::parent)
             && let Ok(mut parent) = grids.get_mut(parent)
         {
-            parent.entities.retain(|_, e| *e != event.entity);
+            parent.entities.remove(event.entity);
         }
         let mut grid = grids.get_mut(event.grid).expect("grid");
         let (mut sprite, mut transform) = sprites.get_mut(event.entity).expect("sprite");
@@ -387,7 +464,7 @@ fn add_to_grid(
             sprite.custom_size = Some(grid.size);
         }
 
-        grid.entities.insert(event.cell, event.entity);
+        grid.entities.push_back(event.cell, event.entity);
         commands.entity(event.grid).add_child(event.entity);
     }
 }
@@ -405,9 +482,7 @@ struct MouseWorldPosition(Vec2);
 
 #[derive(Clone, Component, Default)]
 #[require(Grid2d)]
-struct Pile {
-    entities: Vec<Entity>,
-}
+struct Pile;
 
 impl Default for MouseWorldPosition {
     fn default() -> Self {
